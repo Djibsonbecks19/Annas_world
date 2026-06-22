@@ -10,10 +10,32 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 html,body{width:100%;min-height:100dvh;font-family:'Cormorant Garamond',serif;overflow-x:hidden;}
 
-/* ── VIDEO BG ── */
-#bg-video{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;}
+#bg-video {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+  opacity: 0.3; /* Dims the video details down directly */
+}
+
+/* This creates a pure black backdrop behind the video so it fades into darkness */
+body {
+  background-color: #000000; 
+}
+
+/* OR: Add a dark tinted overlay on top of the video for a richer tone */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 12, 20, 0.65); /* Adjust the 0.65 (65%) to make it darker or lighter */
+  z-index: -1; /* Sits right above the video, but behind your text/cards */
+  pointer-events: none;
+}
 body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
-  background:linear-gradient(155deg,rgba(8,3,8,.58) 0%,rgba(16,6,14,.45) 55%,rgba(8,3,8,.62) 100%);}
+background:linear-gradient(160deg,rgba(8,3,8,.56) 0%,rgba(15,5,12,.44) 50%,rgba(8,3,8,.6) 100%);}
 
 :root{
   --pink:#f7c8d8;
@@ -166,7 +188,9 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 }
 
 /* Petals */
-
+/* Petals */
+.petal{position:fixed;pointer-events:none;z-index:2;border-radius:50% 0 50% 0;animation:fall var(--dur,20s) linear infinite var(--del,0s);opacity:0;}
+@keyframes fall{0%{transform:translateY(-30px) rotate(0);opacity:0}5%{opacity:.55}88%{opacity:.2}100%{transform:translateY(105vh) translateX(var(--dx,30px)) rotate(var(--rot,280deg));opacity:0}}
 </style>
 </head>
 <body>
