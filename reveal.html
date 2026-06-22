@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Anna</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Italiana&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="My_princess/princess1.png">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;min-height:100dvh;font-family:'Cormorant Garamond',serif;overflow-x:hidden;}
+
+/* ── VIDEO BG ── */
+#bg-video{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(155deg,rgba(8,3,8,.58) 0%,rgba(16,6,14,.45) 55%,rgba(8,3,8,.62) 100%);}
+
+:root{
+  --pink:#f7c8d8;
+  --glow:rgba(247,180,210,.48);
+  --glass:rgba(255,255,255,.07);
+  --glass-strong:rgba(255,255,255,.1);
+  --border:rgba(255,200,220,.2);
+  --shine:rgba(255,255,255,.22);
+  --text:#fff5f8;
+  --text-dim:rgba(255,220,235,.5);
+}
+
+/* Corners */
+.corner{position:fixed;pointer-events:none;z-index:3;width:clamp(65px,8vw,120px);height:clamp(65px,8vw,120px);opacity:.22;}
+.corner svg{width:100%;height:100%;}
+.corner.tl{top:0;left:0}.corner.tr{top:0;right:0;transform:scaleX(-1)}
+.corner.bl{bottom:0;left:0;transform:scaleY(-1)}.corner.br{bottom:0;right:0;transform:scale(-1,-1)}
+
+/* Nav back */
+.nav-back{position:fixed;top:18px;left:18px;z-index:300;background:var(--glass);backdrop-filter:blur(30px) saturate(160%) brightness(1.12);-webkit-backdrop-filter:blur(30px) saturate(160%) brightness(1.12);border:1px solid var(--border);color:var(--text);width:44px;height:44px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(0,0,0,.32),inset 0 1px 0 var(--shine);transition:all .3s cubic-bezier(.25,1,.5,1);text-decoration:none;}
+.nav-back svg{width:18px;height:18px;}
+.nav-back:hover{background:var(--glass-strong);border-color:rgba(247,200,220,.45);transform:scale(1.08);}
+
+/* Top label */
+.subtitle{position:fixed;top:18px;left:50%;transform:translateX(-50%);font-family:'Italiana',serif;color:rgba(255,245,250,.9);font-size:clamp(.75rem,1.1vw,1rem);letter-spacing:.3em;white-space:nowrap;z-index:10;text-transform:uppercase;background:var(--glass);backdrop-filter:blur(30px) saturate(160%) brightness(1.12);-webkit-backdrop-filter:blur(30px) saturate(160%) brightness(1.12);padding:8px 26px;border-radius:40px;border:1px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,.25),inset 0 1px 0 var(--shine);animation:fadeIn 1s ease both;}
+@keyframes fadeIn{from{opacity:0;transform:translateX(-50%) translateY(-8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* Scroll wrap */
+#scrollWrap{position:relative;z-index:5;width:100%;height:100dvh;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none;}
+#scrollWrap::-webkit-scrollbar{display:none;}
+.snap-sec{scroll-snap-align:start;width:100%;min-height:100dvh;}
+
+/* Stage */
+.stage{width:100%;min-height:100dvh;display:flex;align-items:center;justify-content:center;gap:clamp(20px,4vw,56px);padding:clamp(74px,10vh,106px) clamp(16px,4vw,72px) clamp(32px,5vh,64px);}
+
+/* Photo card */
+.image-container{flex-shrink:0;width:clamp(230px,25vw,380px);height:clamp(480px,72vh,740px);border-radius:32px;background:rgba(255,255,255,.04);backdrop-filter:blur(8px) saturate(140%) brightness(1.08);-webkit-backdrop-filter:blur(8px) saturate(140%) brightness(1.08);border:1px solid var(--border);box-shadow:0 40px 100px rgba(0,0,0,.45),inset 0 0 0 .5px rgba(255,255,255,.1),inset 0 1px 1px var(--shine);overflow:hidden;position:relative;opacity:0;transform:translateY(42px) scale(.96);transition:opacity 1.3s cubic-bezier(.215,.61,.355,1),transform 1.3s cubic-bezier(.215,.61,.355,1);}
+.image-container.show{opacity:1;transform:translateY(0) scale(1);}
+.carousel-track{display:flex;height:100%;transition:transform .62s cubic-bezier(.25,1,.5,1);will-change:transform;}
+.carousel-slide{height:100%;flex-shrink:0;overflow:hidden;}
+.carousel-slide img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;}
+.carousel-btn{position:absolute;top:50%;transform:translateY(-50%);z-index:15;background:var(--glass);backdrop-filter:blur(20px) brightness(1.1);-webkit-backdrop-filter:blur(20px) brightness(1.1);border:1px solid var(--border);color:var(--text);width:38px;height:38px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .22s;opacity:0;box-shadow:inset 0 1px 0 var(--shine);}
+.carousel-btn svg{width:16px;height:16px;}
+.image-container:hover .carousel-btn{opacity:1;}
+.carousel-btn:hover{background:rgba(247,200,220,.22);border-color:rgba(247,200,220,.55);transform:translateY(-50%) scale(1.1);}
+.carousel-btn.prev{left:12px;}.carousel-btn.next{right:12px;}
+.carousel-dots{position:absolute;bottom:68px;left:50%;transform:translateX(-50%);display:flex;gap:7px;z-index:15;}
+.dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.3);cursor:pointer;transition:all .3s ease;}
+.dot.active{background:var(--pink);width:22px;border-radius:4px;box-shadow:0 0 10px var(--glow);}
+.slide-counter{position:absolute;top:15px;right:15px;z-index:15;font-family:'Space Grotesk',sans-serif;font-size:.62rem;color:rgba(255,255,255,.8);background:rgba(0,0,0,.3);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:20px;padding:4px 12px;letter-spacing:1.2px;border:1px solid rgba(255,255,255,.1);}
+/* Photo sheen */
+.image-container::before{content:'';position:absolute;inset:0;z-index:16;pointer-events:none;border-radius:32px;background:linear-gradient(135deg,rgba(255,255,255,.1) 0%,transparent 40%,rgba(255,255,255,.04) 100%);}
+.continue-btn{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:20;padding:10px clamp(20px,3vw,30px);background:var(--glass);backdrop-filter:blur(20px) brightness(1.1);-webkit-backdrop-filter:blur(20px) brightness(1.1);color:var(--text);border:1px solid var(--border);border-radius:50px;font-family:'Italiana',serif;font-size:clamp(.66rem,.88vw,.76rem);letter-spacing:2.4px;text-transform:uppercase;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:8px;box-shadow:0 8px 28px rgba(0,0,0,.3),inset 0 1px 0 var(--shine);opacity:0;transition:opacity .6s ease 1.2s,transform .3s ease,border-color .3s;}
+.continue-btn svg{width:13px;height:13px;}
+.continue-btn:hover{transform:translateX(-50%) translateY(-2px);border-color:rgba(247,200,220,.55);background:var(--glass-strong);}
+.image-container.show .continue-btn{opacity:1;}
+
+/* Right side */
+.right-side{display:flex;flex-direction:column;gap:clamp(12px,1.8vh,18px);width:clamp(272px,30vw,410px);opacity:0;transform:translateY(30px);transition:opacity 1.1s ease .35s,transform 1.1s ease .35s;}
+.right-side.show{opacity:1;transform:translateY(0);}
+
+/* Glass card — transparent over video */
+.glass-card{background:var(--glass);backdrop-filter:blur(40px) saturate(180%) brightness(1.1);-webkit-backdrop-filter:blur(40px) saturate(180%) brightness(1.1);border:1px solid var(--border);border-radius:22px;box-shadow:0 20px 60px rgba(0,0,0,.35),inset 0 1px 1px var(--shine),inset 0 -1px 1px rgba(0,0,0,.08);position:relative;overflow:hidden;}
+.glass-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.42),transparent);pointer-events:none;}
+
+.song-meta{text-align:center;padding:clamp(15px,2vh,20px) clamp(16px,2vw,24px);}
+.song-name{font-family:'Italiana',serif;font-weight:400;font-size:clamp(1.05rem,1.5vw,1.35rem);color:var(--text);letter-spacing:.04em;margin-bottom:4px;display:flex;align-items:center;justify-content:center;gap:9px;}
+.song-artist{font-size:clamp(.68rem,.88vw,.8rem);color:rgba(255,220,235,.48);letter-spacing:.12em;font-style:italic;}
+.now-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--pink);animation:blink 1.6s ease-in-out infinite;box-shadow:0 0 10px var(--glow);}
+@keyframes blink{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+
+.music-card{padding:clamp(16px,2.2vh,22px) clamp(16px,2vw,24px);text-align:center;}
+.np-label{font-family:'Space Grotesk',sans-serif;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(247,200,220,.55);margin-bottom:14px;font-weight:500;display:flex;align-items:center;justify-content:center;gap:6px;}
+
+.controls{display:flex;justify-content:center;align-items:center;gap:clamp(8px,1.3vw,14px);margin-bottom:clamp(10px,1.4vh,14px);}
+.ctrl{background:rgba(255,255,255,.06);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--border);width:clamp(34px,3.6vw,44px);height:clamp(34px,3.6vw,44px);border-radius:50%;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .22s;box-shadow:inset 0 1px 0 rgba(255,255,255,.14);}
+.ctrl svg{width:15px;height:15px;}
+.ctrl.play svg{width:17px;height:17px;}
+.ctrl.play{background:linear-gradient(135deg,rgba(247,200,220,.6),rgba(220,148,178,.6));border-color:rgba(247,200,220,.4);width:clamp(44px,4.4vw,54px);height:clamp(44px,4.4vw,54px);box-shadow:0 6px 22px rgba(220,140,175,.38),inset 0 1px 0 rgba(255,255,255,.25);}
+.ctrl:hover{transform:scale(1.09);background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.28);}
+.ctrl.play:hover{background:linear-gradient(135deg,rgba(252,220,235,.7),rgba(230,165,195,.7));}
+.ctrl.repeat-active{background:rgba(247,200,220,.18);border-color:rgba(247,200,220,.48);color:var(--pink);}
+
+/* Sliders */
+.slider-wrap{margin:8px 0;}
+input[type=range]{width:100%;height:3px;cursor:pointer;accent-color:var(--pink);background:rgba(255,255,255,.12);border-radius:2px;-webkit-appearance:none;appearance:none;}
+input[type=range]::-webkit-slider-runnable-track{height:3px;background:rgba(255,255,255,.12);border-radius:2px;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--pink);margin-top:-5px;box-shadow:0 0 7px var(--glow);}
+input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--pink);border:none;}
+.time-row{display:flex;align-items:center;gap:8px;font-family:'Space Grotesk',sans-serif;font-size:.63rem;color:rgba(255,220,235,.4);}
+.time-row span{min-width:30px;}
+.time-row input{flex:1;}
+.vol-row{display:flex;align-items:center;gap:9px;margin-top:8px;}
+.vol-icon{width:15px;height:15px;color:rgba(255,220,235,.4);flex-shrink:0;}
+.vol-row input{flex:1;}
+
+/* Tracklist */
+.tracklist{margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:3px;max-height:170px;overflow-y:auto;}
+.tracklist::-webkit-scrollbar{width:2px;}
+.tracklist::-webkit-scrollbar-thumb{background:rgba(247,200,220,.3);border-radius:4px;}
+.track{display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:10px;cursor:pointer;transition:all .2s;text-align:left;}
+.track:hover{background:rgba(255,255,255,.07);}
+.track.active{background:rgba(247,200,220,.12);border:1px solid rgba(247,200,220,.18);}
+.track-n{font-family:'Space Grotesk',sans-serif;font-size:.62rem;color:rgba(255,220,235,.3);min-width:16px;}
+.track.active .track-n{color:var(--pink);}
+.track-info{flex:1;min-width:0;}
+.track-t{font-family:'Italiana',serif;font-size:.82rem;color:rgba(255,245,250,.8);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.track.active .track-t{color:var(--text);}
+.track-a{font-size:.6rem;color:rgba(255,220,235,.38);font-style:italic;margin-top:1px;}
+
+/* Mood tags */
+.mood-row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;padding:clamp(12px,1.6vh,16px) clamp(14px,1.8vw,18px);}
+.mood-tag{background:rgba(255,255,255,.05);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:.66rem;color:rgba(255,224,238,.68);font-style:italic;letter-spacing:.05em;transition:all .25s;cursor:default;}
+.mood-tag:hover{background:rgba(247,200,220,.15);border-color:rgba(247,200,220,.38);color:var(--text);}
+
+/* ── SECTION 2: Countdowns ── */
+.cd-section{width:100%;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:clamp(68px,10vh,96px) clamp(16px,5vw,56px) clamp(36px,6vh,64px);}
+.cd-wrap{width:100%;max-width:900px;display:flex;flex-direction:column;align-items:center;gap:clamp(22px,3.5vh,36px);}
+.cd-eyebrow{font-family:'Italiana',serif;font-size:clamp(.64rem,.86vw,.76rem);letter-spacing:.45em;text-transform:uppercase;color:rgba(255,220,235,.38);}
+.cd-title{font-family:'Italiana',serif;font-weight:400;font-size:clamp(1.7rem,3.8vw,2.8rem);color:var(--text);letter-spacing:.04em;text-align:center;text-shadow:0 0 50px var(--glow);}
+.cd-grid{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:clamp(14px,2.2vw,26px);}
+@media(max-width:640px){.cd-grid{grid-template-columns:1fr;}}
+.cd-card{padding:clamp(22px,3vw,32px) clamp(18px,2.8vw,28px);text-align:center;}
+.cd-icon{width:36px;height:36px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(247,200,220,.1);border:1px solid rgba(247,200,220,.24);}
+.cd-icon svg{width:17px;height:17px;color:var(--pink);}
+.cd-label{font-family:'Space Grotesk',sans-serif;font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,220,235,.4);margin-bottom:14px;}
+.cd-nums{display:flex;justify-content:center;gap:clamp(7px,1.4vw,14px);margin-bottom:10px;flex-wrap:wrap;}
+.cd-unit{display:flex;flex-direction:column;align-items:center;min-width:46px;}
+.cd-val{font-family:'Italiana',serif;font-size:clamp(1.4rem,2.8vw,2.2rem);color:var(--text);line-height:1;}
+.cd-u{font-family:'Space Grotesk',sans-serif;font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,220,235,.38);margin-top:4px;}
+.cd-note{font-size:.76rem;font-style:italic;color:rgba(255,224,238,.5);letter-spacing:.03em;}
+.cd-date{font-family:'Space Grotesk',sans-serif;font-size:.6rem;color:rgba(247,200,220,.54);letter-spacing:.1em;margin-top:8px;}
+
+/* Birthday button */
+.bday-btn{display:none;margin-top:14px;padding:10px 26px;background:linear-gradient(135deg,rgba(247,200,220,.55),rgba(220,148,178,.45));border:1px solid rgba(247,200,220,.52);border-radius:50px;font-family:'Italiana',serif;font-size:.8rem;letter-spacing:2px;text-transform:uppercase;color:var(--text);cursor:pointer;box-shadow:0 6px 20px rgba(247,160,190,.35),inset 0 1px 0 rgba(255,255,255,.22);transition:all .3s;animation:pulse-btn 2s ease-in-out infinite;}
+.bday-btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(247,160,190,.55);}
+@keyframes pulse-btn{0%,100%{box-shadow:0 6px 20px rgba(247,160,190,.35)}50%{box-shadow:0 8px 30px rgba(247,160,190,.65)}}
+
+/* Mobile */
+@media(max-width:640px){
+  .stage{flex-direction:column;justify-content:flex-start;align-items:center;gap:16px;padding:78px 12px 28px;}
+  .image-container{width:min(268px,83vw);height:min(490px,70vh);}
+  .right-side{width:100%;max-width:420px;}
+  .carousel-btn{opacity:1;}
+}
+@media(min-width:641px) and (max-width:960px){
+  .stage{gap:22px;padding:64px 20px 24px;}
+  .image-container{width:clamp(195px,23vw,290px);height:clamp(370px,54vh,540px);}
+  .right-side{width:clamp(235px,32vw,360px);}
+}
+
+/* Petals */
+
+</style>
+</head>
+<body>
+
+<video id="bg-video" autoplay muted loop playsinline style="position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;">
+  <source src="assets/sakura.mp4" type="video/mp4">
+</video>
+
+<div class="corner tl"><svg viewBox="0 0 160 160" fill="none"><circle cx="40" cy="120" r="2" fill="#f7c8d8"/><circle cx="62" cy="102" r="1.5" fill="#f7c8d8"/><path d="M10 155 Q42 88 92 66" stroke="#f7c8d8" stroke-width=".7" fill="none" opacity=".4"/></svg></div>
+<div class="corner tr"><svg viewBox="0 0 160 160" fill="none"><circle cx="120" cy="120" r="2" fill="#f7c8d8"/><path d="M150 155 Q118 88 68 66" stroke="#f7c8d8" stroke-width=".7" fill="none" opacity=".4"/></svg></div>
+<div class="corner bl"><svg viewBox="0 0 160 160" fill="none"><circle cx="40" cy="40" r="2" fill="#f7c8d8"/></svg></div>
+<div class="corner br"><svg viewBox="0 0 160 160" fill="none"><circle cx="120" cy="40" r="2" fill="#f7c8d8"/></svg></div>
+
+<a class="nav-back" href="index.html" id="backBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></a>
+<p class="subtitle">Anna's World</p>
+
+<div id="scrollWrap">
+<section class="snap-sec">
+<div class="stage">
+  <div class="image-container" id="imgContainer">
+    <div class="carousel-track" id="carouselTrack"></div>
+    <button class="carousel-btn prev" id="prevBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+    <button class="carousel-btn next" id="nextBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
+    <div class="carousel-dots" id="carouselDots"></div>
+    <div class="slide-counter" id="slideCounter">1 / 1</div>
+    <button class="continue-btn" id="continueBtn">continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
+  </div>
+  <div class="right-side" id="rightSide">
+    <div class="glass-card song-meta">
+      <div class="song-name"><span class="now-dot"></span><span id="songTitle">Be Like a Woman</span></div>
+      <div class="song-artist" id="songArtist">Chris Rainbow</div>
+    </div>
+    <div class="glass-card music-card">
+      <div class="np-label">now playing</div>
+      <div class="controls">
+        <button class="ctrl" id="repeatBtn" onclick="toggleRepeat()" title="Repeat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg></button>
+        <button class="ctrl" onclick="prevSong()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2v14H6zM10 12l9-7v14z"/></svg></button>
+        <button class="ctrl play" id="playBtn" onclick="togglePlay()"><svg id="playIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
+        <button class="ctrl" onclick="nextSong()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 5h2v14h-2zM5 5l9 7-9 7z"/></svg></button>
+        <button class="ctrl" onclick="song.currentTime=0;song.play()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg></button>
+      </div>
+      <div class="slider-wrap"><div class="time-row"><span id="curT">0:00</span><input type="range" id="prog" min="0" max="100" value="0"><span id="durT">0:00</span></div></div>
+      <div class="slider-wrap vol-row">
+        <svg class="vol-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg>
+        <input type="range" id="vol" min="0" max="1" step="0.02" value="1">
+        <svg class="vol-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+      </div>
+      <div class="tracklist" id="tracklist"></div>
+    </div>
+    <div class="glass-card mood-row">
+      <span class="mood-tag">yours</span><span class="mood-tag">forever</span><span class="mood-tag">cherished</span><span class="mood-tag">tender</span><span class="mood-tag">radiant</span><span class="mood-tag">my whole world</span>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="snap-sec">
+<div class="cd-section">
+  <div class="cd-wrap">
+    <div class="cd-eyebrow">counting moments</div>
+    <h2 class="cd-title">For Us, For Her</h2>
+    <div class="cd-grid">
+      <div class="glass-card cd-card">
+        <div class="cd-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="16" rx="2"/><path d="M16 3v4M8 3v4M2 9h20"/></svg></div>
+        <div class="cd-label">Anna's Birthday</div>
+        <div class="cd-nums">
+          <div class="cd-unit"><div class="cd-val" id="bd-d">00</div><div class="cd-u">days</div></div>
+          <div class="cd-unit"><div class="cd-val" id="bd-h">00</div><div class="cd-u">hrs</div></div>
+          <div class="cd-unit"><div class="cd-val" id="bd-m">00</div><div class="cd-u">min</div></div>
+          <div class="cd-unit"><div class="cd-val" id="bd-s">00</div><div class="cd-u">sec</div></div>
+        </div>
+        <p class="cd-note" id="bdayNote">until it's her day again</p>
+        <div class="cd-date">June 24</div>
+        <button class="bday-btn" id="bdayBtn" onclick="window.location.href='birthday.html'">🎂 It's Her Day!</button>
+      </div>
+      <div class="glass-card cd-card">
+        <div class="cd-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.9-10.2-9.3C-0.3 8.1 1.2 4 5.1 3.2c2.2-.4 4.2.6 5.4 2.4C11.7 3.8 13.7 2.8 15.9 3.2c3.9.8 5.4 4.9 3.3 8.5C19.5 16.1 12 21 12 21z"/></svg></div>
+        <div class="cd-label">together since</div>
+        <div class="cd-nums">
+          <div class="cd-unit"><div class="cd-val" id="tg-d">00</div><div class="cd-u">days</div></div>
+          <div class="cd-unit"><div class="cd-val" id="tg-h">00</div><div class="cd-u">hrs</div></div>
+          <div class="cd-unit"><div class="cd-val" id="tg-m">00</div><div class="cd-u">min</div></div>
+          <div class="cd-unit"><div class="cd-val" id="tg-s">00</div><div class="cd-u">sec</div></div>
+        </div>
+        <p class="cd-note">every second still counts</p>
+        <div class="cd-date">September 2, 2025 · 5:52 AM</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+</div>
+
+<audio id="loveSong"></audio>
+
+<script>
+// Petals
+(function(){
+  const cols=['#f7c8d8','#fce0ec','#f5b8cc','#fad0e0'];
+  for(let i=0;i<20;i++){
+    const p=document.createElement('div');const s=(Math.random()*7+4).toFixed(1);
+    p.className='petal';
+    p.style.cssText=`width:${s}px;height:${s}px;background:${cols[i%4]};left:${Math.random()*110-5}%;--dur:${(Math.random()*18+14).toFixed(0)}s;--del:-${(Math.random()*20).toFixed(0)}s;--dx:${((Math.random()-.5)*100).toFixed(0)}px;--rot:${(Math.random()*360).toFixed(0)}deg;`;
+    document.body.appendChild(p);
+  }
+})();
+
+// Carousel
+const MAX_PHOTOS=30,EXTS=['png','jpg','jpeg'],photoFiles=[];
+function probeImg(p){return new Promise(r=>{const i=new Image();i.onload=()=>r(true);i.onerror=()=>r(false);i.src=p;});}
+async function detectPhotos(){
+  for(let i=1;i<=MAX_PHOTOS;i++){
+    let found=null;
+    for(const e of EXTS){const p=`My_princess/princess${i}.${e}`;if(await probeImg(p)){found=p;break;}}
+    if(found)photoFiles.push(found);
+    else if(i>3&&photoFiles.length<i-2)break;
+  }
+  if(!photoFiles.length)photoFiles.push('My_princess/princess1.png');
+  buildCarousel();
+}
+const cTrack=document.getElementById('carouselTrack'),prevBtn=document.getElementById('prevBtn'),nextBtn=document.getElementById('nextBtn'),dotsWrap=document.getElementById('carouselDots'),ctr=document.getElementById('slideCounter');
+let cur=0,N=0;
+function buildCarousel(){N=photoFiles.length;cTrack.innerHTML=photoFiles.map(s=>`<div class="carousel-slide"><img src="${s}" alt=""></div>`).join('');cTrack.style.width=(N*100)+'%';cTrack.querySelectorAll('.carousel-slide').forEach(s=>s.style.width=(100/N)+'%');dotsWrap.innerHTML='';photoFiles.forEach((_,i)=>{const d=document.createElement('div');d.className='dot'+(i===0?' active':'');d.onclick=()=>goTo(i);dotsWrap.appendChild(d);});updateC();}
+function updateC(){cTrack.style.transform=`translateX(-${cur*(100/N)}%)`;dotsWrap.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===cur));ctr.textContent=`${cur+1} / ${N}`;}
+function goTo(i){cur=(i+N)%N;updateC();}
+prevBtn.onclick=()=>goTo(cur-1);nextBtn.onclick=()=>goTo(cur+1);
+let tx=0;cTrack.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;},{passive:true});cTrack.addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>38)goTo(cur+(d<0?1:-1));},{passive:true});
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')goTo(cur+1);if(e.key==='ArrowLeft')goTo(cur-1);});
+detectPhotos();
+
+// Music
+const PLAYLIST=[
+  {file:'songs/Chris Rainbow - Be Like a Woman.mp3',title:'Be Like a Woman',artist:'Chris Rainbow'},
+  {file:'songs/a very classy cigarette.mp3',title:'A Very Classy Cigarette',artist:'a very classy cigarette'},
+  {file:'songs/An Eater.mp3',title:'An Eater',artist:'An Eater'},
+  {file:'songs/The Temptations - My Girl.mp3',title:'My Girl',artist:'The Temptations'},
+  {file:'songs/Bee Gees - More Than A Woman.mp3',title:'More Than A Woman',artist:'Bee Gees'},
+  {file:'songs/american_wedding.mp3',title:'American Wedding',artist:'Frank Ocean'},
+];
+const song=document.getElementById('loveSong'),playIcon=document.getElementById('playIcon'),prog=document.getElementById('prog'),volSlider=document.getElementById('vol');
+const IP='<path d="M8 5v14l11-7z"/>',IP2='<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
+let tIdx=parseInt(sessionStorage.getItem('mp_track')||'0',10);
+if(isNaN(tIdx)||tIdx<0||tIdx>=PLAYLIST.length)tIdx=0;
+let repeatOne=sessionStorage.getItem('mp_repeat')==='true';
+function fmt(s){if(!s||isNaN(s))return'0:00';const m=Math.floor(s/60),sc=Math.floor(s%60);return m+':'+(sc<10?'0':'')+sc;}
+function buildTL(){document.getElementById('tracklist').innerHTML=PLAYLIST.map((t,i)=>`<div class="track${i===tIdx?' active':''}" data-i="${i}"><span class="track-n">${String(i+1).padStart(2,'0')}</span><div class="track-info"><div class="track-t">${t.title}</div><div class="track-a">${t.artist}</div></div></div>`).join('');document.querySelectorAll('.track').forEach(r=>r.onclick=()=>{loadTrack(parseInt(r.dataset.i));song.play().then(()=>playIcon.innerHTML=IP2).catch(()=>{});});}
+function loadTrack(i){tIdx=i;const t=PLAYLIST[i];song.src=t.file;document.getElementById('songTitle').textContent=t.title;document.getElementById('songArtist').textContent=t.artist;sessionStorage.setItem('mp_track',i);document.querySelectorAll('.track').forEach((r,j)=>r.classList.toggle('active',j===i));}
+function nextSong(){loadTrack((tIdx+1)%PLAYLIST.length);song.play().then(()=>playIcon.innerHTML=IP2).catch(()=>{});}
+function prevSong(){loadTrack((tIdx-1+PLAYLIST.length)%PLAYLIST.length);song.play().then(()=>playIcon.innerHTML=IP2).catch(()=>{});}
+function toggleRepeat(){repeatOne=!repeatOne;sessionStorage.setItem('mp_repeat',repeatOne);document.getElementById('repeatBtn').classList.toggle('repeat-active',repeatOne);}
+function togglePlay(){if(song.paused){song.play();playIcon.innerHTML=IP2;}else{song.pause();playIcon.innerHTML=IP;}}
+song.addEventListener('loadedmetadata',()=>{document.getElementById('durT').textContent=fmt(song.duration);});
+song.addEventListener('timeupdate',()=>{if(!song.duration)return;prog.value=(song.currentTime/song.duration)*100;document.getElementById('curT').textContent=fmt(song.currentTime);});
+song.addEventListener('ended',()=>repeatOne?(song.currentTime=0,song.play()):nextSong());
+prog.addEventListener('input',()=>{song.currentTime=(prog.value/100)*song.duration;});
+volSlider.addEventListener('input',e=>{song.volume=parseFloat(e.target.value);sessionStorage.setItem('mp_volume',e.target.value);});
+function saveState(){sessionStorage.setItem('mp_time',song.currentTime||0);sessionStorage.setItem('mp_playing',(!song.paused).toString());sessionStorage.setItem('mp_volume',song.volume);sessionStorage.setItem('mp_track',tIdx);sessionStorage.setItem('mp_repeat',repeatOne);}
+document.getElementById('continueBtn').addEventListener('click',()=>{saveState();window.location.href='bouquet.html';});
+document.getElementById('backBtn').addEventListener('click',e=>{e.preventDefault();saveState();window.location.href='index.html';});
+window.addEventListener('beforeunload',saveState);window.addEventListener('pagehide',saveState);
+window.addEventListener('load',()=>{
+  const sT=parseFloat(sessionStorage.getItem('mp_time')||'0'),sV=parseFloat(sessionStorage.getItem('mp_volume')||'1'),wasP=sessionStorage.getItem('mp_playing')==='true';
+  document.getElementById('imgContainer').classList.add('show');document.getElementById('rightSide').classList.add('show');
+  buildTL();loadTrack(tIdx);document.getElementById('repeatBtn').classList.toggle('repeat-active',repeatOne);
+  song.volume=sV;volSlider.value=sV;
+  song.addEventListener('canplay',function onR(){song.removeEventListener('canplay',onR);try{if(sT>0)song.currentTime=sT;if(wasP){song.play().catch(()=>{});playIcon.innerHTML=IP2;}}catch(e){}},{once:true});
+  setTimeout(()=>{song.play().then(()=>playIcon.innerHTML=IP2).catch(()=>{});},400);
+});
+
+// Countdowns
+function pad(n){return String(Math.max(0,n)).padStart(2,'0');}
+function updateBirthday(){
+  const now=new Date();
+  let next=new Date(now.getFullYear(),5,24,0,0,0);
+  if(next.getTime()<=now.getTime())next=new Date(now.getFullYear()+1,5,24,0,0,0);
+  const today=now.getMonth()===5&&now.getDate()===24;
+  document.getElementById('bdayNote').textContent=today?'🎂 Today is her day!':'until it\'s her day again';
+  const btn=document.getElementById('bdayBtn');
+  if(today){btn.style.display='inline-block';['bd-d','bd-h','bd-m','bd-s'].forEach(id=>document.getElementById(id).textContent='00');return;}
+  else btn.style.display='none';
+  let diff=next.getTime()-now.getTime();
+  const d=Math.floor(diff/86400000);diff-=d*86400000;const h=Math.floor(diff/3600000);diff-=h*3600000;const m=Math.floor(diff/60000);diff-=m*60000;const s=Math.floor(diff/1000);
+  document.getElementById('bd-d').textContent=pad(d);document.getElementById('bd-h').textContent=pad(h);document.getElementById('bd-m').textContent=pad(m);document.getElementById('bd-s').textContent=pad(s);
+}
+const TOGETHER_SINCE=new Date(2025,8,2,5,52,0);
+function updateTogether(){
+  let diff=Math.max(0,Date.now()-TOGETHER_SINCE.getTime());
+  const d=Math.floor(diff/86400000);diff-=d*86400000;const h=Math.floor(diff/3600000);diff-=h*3600000;const m=Math.floor(diff/60000);diff-=m*60000;const s=Math.floor(diff/1000);
+  document.getElementById('tg-d').textContent=pad(d);document.getElementById('tg-h').textContent=pad(h);document.getElementById('tg-m').textContent=pad(m);document.getElementById('tg-s').textContent=pad(s);
+}
+updateBirthday();updateTogether();setInterval(()=>{updateBirthday();updateTogether();},1000);
+</script>
+
+<script id="sakura-petals">
+/* ── SAKURA PETAL CANVAS ── */
+(function(){
+  const cv=document.createElement("canvas");
+  cv.style.cssText="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:4;";
+  document.body.appendChild(cv);
+  const ctx=cv.getContext("2d");
+  let W,H;
+  function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;}
+  window.addEventListener("resize",resize);resize();
+  const COLS=["#f7c8d8","#f9d5e2","#f0b0c8","#fce0ec","#f5a8c0","#fdd0e0","#f8e0ea","#e8a0b8"];
+  class Petal{
+    constructor(init){this.reset(init);}
+    reset(init){
+      this.x=Math.random()*W*1.1-W*0.05;
+      this.y=init?Math.random()*H*1.1-H*0.1:-30-Math.random()*80;
+      this.size=Math.random()*9+4;
+      this.col=COLS[Math.floor(Math.random()*COLS.length)];
+      this.vx=(Math.random()-0.5)*0.9;
+      this.vy=Math.random()*1.2+0.5;
+      this.rot=Math.random()*Math.PI*2;
+      this.rspd=(Math.random()-0.5)*0.04;
+      this.wobble=Math.random()*Math.PI*2;
+      this.wobbleSpd=Math.random()*0.02+0.008;
+      this.wobbleAmp=Math.random()*0.55+0.2;
+      this.alpha=Math.random()*0.45+0.3;
+      this.petalType=Math.floor(Math.random()*3);
+    }
+    update(){
+      this.wobble+=this.wobbleSpd;
+      this.x+=this.vx+Math.sin(this.wobble)*this.wobbleAmp;
+      this.y+=this.vy;
+      this.rot+=this.rspd;
+      if(this.y>H+40||this.x<-60||this.x>W+60)this.reset(false);
+    }
+    draw(){
+      ctx.save();ctx.globalAlpha=this.alpha;ctx.translate(this.x,this.y);ctx.rotate(this.rot);ctx.fillStyle=this.col;
+      const s=this.size;ctx.beginPath();
+      if(this.petalType===0){ctx.moveTo(0,0);ctx.bezierCurveTo(-s*.5,-s*.4,-s*.5,-s*1.1,0,-s*1.4);ctx.bezierCurveTo(s*.5,-s*1.1,s*.5,-s*.4,0,0);}
+      else if(this.petalType===1){ctx.moveTo(0,0);ctx.bezierCurveTo(-s*.7,-s*.3,-s*.6,-s*1.0,0,-s*1.3);ctx.bezierCurveTo(s*.6,-s*1.0,s*.7,-s*.3,0,0);}
+      else{ctx.ellipse(0,-s*.6,s*.38,s*.65,0,0,Math.PI*2);}
+      ctx.fill();
+      if(this.petalType!==2&&this.size>6){ctx.globalAlpha=this.alpha*0.25;ctx.strokeStyle="#fff";ctx.lineWidth=0.6;ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(0,-s*1.1);ctx.stroke();}
+      ctx.restore();
+    }
+  }
+  function count(){return Math.round((W*H)/(1920*1080)*90)+30;}
+  let petals=[];
+  function spawn(){petals=[];const n=count();for(let i=0;i<n;i++)petals.push(new Petal(true));}
+  spawn();window.addEventListener("resize",spawn);
+  function frame(){ctx.clearRect(0,0,W,H);petals.forEach(p=>{p.update();p.draw();});requestAnimationFrame(frame);}
+  frame();
+})();
+</script>
+
+</body>
+</html>
