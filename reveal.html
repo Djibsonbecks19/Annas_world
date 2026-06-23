@@ -346,14 +346,9 @@ const photoFiles = [
 function detectPhotos(){
   buildCarousel();
 }
-cTrack.innerHTML=photoFiles.map((s,i)=>`
-<div class="carousel-slide">
-<img ${i===0 ? `src="${s}"` : `data-src="${s}"`} alt="">
-</div>
-`).join('');
-
+const cTrack=document.getElementById('carouselTrack'),prevBtn=document.getElementById('prevBtn'),nextBtn=document.getElementById('nextBtn'),dotsWrap=document.getElementById('carouselDots'),ctr=document.getElementById('slideCounter');
 let cur=0,N=0;
-function buildCarousel(){N=photoFiles.length;cTrack.innerHTML=photoFiles.map(s=>`<div class="carousel-slide"><img src="${s}" alt=""></div>`).join('');cTrack.style.width=(N*100)+'%';cTrack.querySelectorAll('.carousel-slide').forEach(s=>s.style.width=(100/N)+'%');dotsWrap.innerHTML='';photoFiles.forEach((_,i)=>{const d=document.createElement('div');d.className='dot'+(i===0?' active':'');d.onclick=()=>goTo(i);dotsWrap.appendChild(d);});updateC();}
+function buildCarousel(){N=photoFiles.length;cTrack.innerHTML=photoFiles.map((s,i)=>`<div class="carousel-slide"><img ${i===0 ? `src="${s}"` : `data-src="${s}"`} alt=""></div>`).join('');cTrack.style.width=(N*100)+'%';cTrack.querySelectorAll('.carousel-slide').forEach(s=>s.style.width=(100/N)+'%');dotsWrap.innerHTML='';photoFiles.forEach((_,i)=>{const d=document.createElement('div');d.className='dot'+(i===0?' active':'');d.onclick=()=>goTo(i);dotsWrap.appendChild(d);});updateC();}
 function updateC(){cTrack.style.transform=`translateX(-${cur*(100/N)}%)`;dotsWrap.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===cur));ctr.textContent=`${cur+1} / ${N}`;}
 function goTo(i){
   cur=(i+N)%N;
