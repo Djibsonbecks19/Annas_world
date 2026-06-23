@@ -245,8 +245,7 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
     </div>
     <div class="pl-progress-wrap">
     
-      <div class="pl-progress-bar" id="plProgressBar" onclick="(event)">
-
+      <div class="pl-progress-bar" id="plProgressBar" onclick="plSeek(event)">
         <div class="pl-progress-fill" id="plFill"></div>
       </div>
       <div class="pl-time"><span id="plCur">0:00</span><span id="plLeft">0:00</span></div>
@@ -489,7 +488,9 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 // ── PLAYLIST (real audio) ─────────────────────────────────────
 (function(){
   const tracks=[
-    {name:'Prom Queen',         artist:'Beach Bunny',                file:'assets/Beach Bunny - Prom Queen (Lyrics).mp3',                                   note:'this one sounds like how I feel about you'},
+    {name:'I was all over her',         artist:'Salvia Palth',                file:'assets/i was all over her.mp3',                                   note:'All the words, all the feelings'},
+    {name:'Prom Queen',         artist:'Beach Bunny',                file:'assets/Modern Talking - Cheri Cheri Lady (Official Video).mp3',                                   note:'Makes me dream of you'},
+    {name:'Cheri, Cheri Lady',         artist:'Modern Talking',                file:'assets/Beach Bunny - Prom Queen (Lyrics).mp3',                                   note:'this one sounds like how I feel about you'},
     {name:'Agony',               artist:'Yung Lean (instr. remix)',    file:'assets/Agony by Yung Lean instrumental remix.mp3',                              note:'every single word'},
     {name:'Aquatic Ambience',    artist:'scizzie',                     file:'assets/scizzie - aquatic ambience.mp3',                                         note:'I found a love, for me'},
     {name:'Pack of Cigarettes',  artist:'Kino (slowed + looped)',      file:'assets/Kino - pack of cigarettes (super slowed + best part looped).mp3',         note:'I have loved you for a thousand years'},
@@ -606,10 +607,16 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
   window.plPrev=function(){ load((idx-1+tracks.length)%tracks.length,playing); };
   window.plSeek=function(e){
     const bar=document.getElementById('plProgressBar');
-    if(audio.duration) audio.currentTime=(e.offsetX/bar.offsetWidth)*audio.duration;
+    const rect=bar.getBoundingClientRect();
+    const ratio=(e.clientX-rect.left)/rect.width;
+    if(audio.duration) audio.currentTime = Math.min(Math.max(ratio,0),1)*audio.duration;
   };
   window.plTogLoop=function(){ loopOne=!loopOne; updateToggles(); save(); };
   window.plTogShuf=function(){ shuffle=!shuffle; updateToggles(); save(); };
+
+document.getElementById('plProgressBar').addEventListener('touchstart', function(e){
+  plSeek(e.touches[0]);
+});
 
   // restore saved state
   const st=loadState();
