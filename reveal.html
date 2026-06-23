@@ -338,16 +338,12 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 })();
 
 // Carousel
-const MAX_PHOTOS=30,EXTS=['png','jpg','jpeg'],photoFiles=[];
-function probeImg(p){return new Promise(r=>{const i=new Image();i.onload=()=>r(true);i.onerror=()=>r(false);i.src=p;});}
-async function detectPhotos(){
-  for(let i=1;i<=MAX_PHOTOS;i++){
-    let found=null;
-    for(const e of EXTS){const p=`My_princess/princess${i}.${e}`;if(await probeImg(p)){found=p;break;}}
-    if(found)photoFiles.push(found);
-    else if(i>3&&photoFiles.length<i-2)break;
-  }
-  if(!photoFiles.length)photoFiles.push('My_princess/princess1.png');
+const photoFiles = [
+  "My_princess/princess1.png",
+  ...Array.from({length:33}, (_,i)=>`My_princess/princess${i+2}.jpeg`)
+];
+
+function detectPhotos(){
   buildCarousel();
 }
 const cTrack=document.getElementById('carouselTrack'),prevBtn=document.getElementById('prevBtn'),nextBtn=document.getElementById('nextBtn'),dotsWrap=document.getElementById('carouselDots'),ctr=document.getElementById('slideCounter');
